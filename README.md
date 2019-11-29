@@ -9,6 +9,9 @@
 - iOS 8.0+
 - swift 3.0+
 
+# 特色功能
+- collectionView的滚动优化
+
 # 主要功能：
 
 - 图片多选，设置最大可选择的照片数量，对选择后的照片进行压缩处理
@@ -25,12 +28,49 @@
 - 本地化，支持英文
 - 支持git图展示
 - 优化collectionView的滚动效果
+- 支持改变主题色
 
 # 更新日志
 
--版本号 2.2.9：优化横屏问题
+-2.2.9：优化横屏问题
 
--版本号 2.3.0：优化命名规范问题（CLImagePickersTool统一改成CLImagePickerTool，中间的s去掉了）
+-2.3.0：优化命名规范问题（CLImagePickersTool统一改成CLImagePickerTool，中间的s去掉了）
+
+-2.3.2：fix bug
+
+-3.0.0: 重大升级
+
+- 支持swift4.2
+
+- 访问相册方法部分过期，新方法可以传入当前控制器，也可以不传，当不传入当前控制器时，CLImagePickerTool内部会获取当前窗口的控制器，建议当获取不到时，可传入当前控制器。
+
+- 支持设置tineColor(按钮颜色，图片颜色高度定制)
+
+- 增加相册中是否展示拍照图片，默认展示，public var showCamaroInPicture = true
+
+-3.0.2 适配iphone XS
+
+- 修复相册底部弹出的问题。
+
+-3.0.3 修复单选情况下设置tineColor，确定按钮的颜色没有改变的问题
+
+-3.0.4 开放PopViewUtils
+
+-3.0.5 适配swift5.0语法
+
+-3.0.6 优化AnotherViewController样式
+
+-3.0.7 dismiss完成后再触发回调函数
+
+-3.0.8 适配pad
+
+-3.0.9 fix 相册中隐藏拍照图片的问题
+
+-3.1.0 适配ios13，修复部分bug
+
+-3.1.1 适配港版手机相册名称问题
+
+-3.1.2 修复拍照线程问题
 
 # 使用方式
 1.由于该库设计的图片较多，类也较多，为了避免和项目中的文件冲突建议使用pod管理，有什么问题和需求可及时提出。
@@ -60,6 +100,11 @@ github "Darren-chenchen/CLImagePickerTool"
 // superVC 当前的控制器 MaxImagesCount最多选择的照片数量
 let imagePickTool = CLImagePickerTool()
 imagePickTool.setupImagePickerWith(MaxImagesCount: 6, superVC: self) { (asset,cutImage) in
+    print("返回的asset数组是\(asset)")		
+ }
+ 
+ 3.0.0 新增方式
+ imagePickTool.cl_setupImagePickerWith(MaxImagesCount: 6) { (asset,cutImage) in
     print("返回的asset数组是\(asset)")		
  }
 ```
@@ -186,6 +231,8 @@ public var navColor: UIColor? = nil
 public var navTitleColor: UIColor? = nil
 // 配置状态栏的颜色
 public var statusBarType: CLImagePickerToolStatusBarType = .black
+// 相册中是否展示拍照图片
+public var showCamaroInPicture = true
 ```		
 
 #### 注意点
@@ -240,6 +287,7 @@ CLImagePickerTool.convertAssetToAvPlayerItem(asset: self.asset!, successClouse: 
 
 4.关于状态的颜色配置
 在这个库中设置状态颜色改变需要2部操作
+
 1）在info.plist文件中设置View controller-based status bar appearance为yes。
 
 	<key>UIViewControllerBasedStatusBarAppearance</key>
@@ -298,3 +346,6 @@ let imagePickTool = CLImagePickerTool()
 ![(logo)](http://images2017.cnblogs.com/blog/818253/201711/818253-20171116114322327-1275157845.png)
 ![(logo)](http://images2017.cnblogs.com/blog/818253/201711/818253-20171116114303577-2033470575.png)
 ![(logo)](https://images2018.cnblogs.com/blog/818253/201711/818253-20171129101532269-1706535987.png)
+
+
+## 如果该框架对您有启发，请帮我点个广告，谢谢 https://www.darrenblog.cn/#/detail/5dbf9a8a7bb725236692b6d4

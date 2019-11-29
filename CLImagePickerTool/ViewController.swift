@@ -26,8 +26,10 @@ class ViewController: UIViewController {
     @IBAction func clickBtn2(_ sender: Any) {
         
         imagePickTool.cameraOut = true
-        
-        imagePickTool.setupImagePickerWith(MaxImagesCount: 6, superVC: self) { (asset,cutImage) in
+        imagePickTool.isHiddenVideo = true
+        imagePickTool.singleImageChooseType = .singlePicture
+        imagePickTool.singleModelImageCanEditor = true
+        imagePickTool.cl_setupImagePickerWith(MaxImagesCount: 6) { (asset,cutImage) in
             print("返回的asset数组是\(asset)")
         }
     }
@@ -70,7 +72,6 @@ class ViewController: UIViewController {
         self.videoScrollView.visitPhotoBtnClickClouse = {[weak self] () in
             self?.setupVideo()
         }
-
     }
     
     // 异步原图
@@ -79,7 +80,7 @@ class ViewController: UIViewController {
         
         imagePickTool.isHiddenVideo = true
         
-        imagePickTool.setupImagePickerWith(MaxImagesCount: 10, superVC: self) { (assetArr,cutImage) in
+        imagePickTool.cl_setupImagePickerWith(MaxImagesCount: 10) { (assetArr,cutImage) in
             print("返回的asset数组是\(assetArr)")
             
             PopViewUtil.share.showLoading()
@@ -117,18 +118,17 @@ class ViewController: UIViewController {
     
     // 同步，缩略图
     private func setupPhoto2() {
-        let imagePickTool = CLImagePickerTool()
         imagePickTool.isHiddenVideo = true
-        imagePickTool.setupImagePickerWith(MaxImagesCount: 10, superVC: self) { (asset,cutImage) in
+        imagePickTool.cl_setupImagePickerWith(MaxImagesCount: 10) { (asset,cutImage) in
             print("返回的asset数组是\(asset)")
-            
+        
             //获取缩略图，耗时较短
             let imageArr = CLImagePickerTool.convertAssetArrToThumbnailImage(assetArr: asset, targetSize: CGSize(width: 80, height: 80))
             print(imageArr)
             
             self.photoScrollView2.picArr.removeAll()
             self.photoScrollView2.picArr.append(UIImage(named: "takePicture")!)
-            
+
             for item in imageArr {
                 self.photoScrollView2.picArr.append(item)
             }
@@ -153,7 +153,7 @@ class ViewController: UIViewController {
     private func setupVideo() {
         let imagePickTool = CLImagePickerTool()
         imagePickTool.isHiddenImage = true
-        imagePickTool.setupImagePickerWith(MaxImagesCount: 5, superVC: self) { (assetArr,cutImage) in
+        imagePickTool.cl_setupImagePickerWith(MaxImagesCount: 5) { (assetArr,cutImage) in
             
             PopViewUtil.share.showLoading()
             
@@ -197,7 +197,15 @@ class ViewController: UIViewController {
     
     @IBAction func clickMoreBtn(_ sender: Any) {
         let test = TestViewController.init(nibName: "TestViewController", bundle: nil)
+        test.modalPresentationStyle = .fullScreen
         self.present(test, animated: true, completion: nil)
+    }
+    @IBAction func clickCamaroHiddenbtn(_ sender: Any) {
+        imagePickTool.showCamaroInPicture = false
+        
+        imagePickTool.cl_setupImagePickerWith(MaxImagesCount: 6) { (asset,cutImage) in
+            print("返回的asset数组是\(asset)")
+        }
     }
 }
 

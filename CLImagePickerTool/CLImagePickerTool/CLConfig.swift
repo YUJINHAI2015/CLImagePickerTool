@@ -55,7 +55,7 @@ func CLViewsBorder(_ view:UIView, borderWidth:CGFloat, borderColor:UIColor?=nil,
 }
 
 // 主题色
-let mainColor = CoustomColor(85, g: 182, b: 55, a: 1)
+var mainColor = CoustomColor(85, g: 182, b: 55, a: 1)
 
 
 // 所有照片的可能情况
@@ -63,6 +63,7 @@ let allPhoto = "所有照片"
 let allPhoto2 = "All Photos"
 let allPhoto3 = "Camera Roll"
 let allPhoto4 = "相机胶卷"
+let allPhoto5 = "最近项目"
 
 // 本地化
 let sureStr = BundleUtil.cl_localizedStringForKey(key: "确定")

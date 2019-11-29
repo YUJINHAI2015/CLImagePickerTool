@@ -50,6 +50,7 @@ class CLCropViewController: CLBaseImagePickerViewController {
         scroll.showsVerticalScrollIndicator = false
         scroll.layer.borderWidth = 1.5
         scroll.layer.borderColor = UIColor.white.cgColor
+        
         return scroll
     }()
     
@@ -92,7 +93,7 @@ class CLCropViewController: CLBaseImagePickerViewController {
         
         let layer = CAShapeLayer()
         layer.fillColor = UIColor(white: 0, alpha: 0.5).cgColor
-        layer.fillRule = kCAFillRuleEvenOdd
+        layer.fillRule = CAShapeLayerFillRule.evenOdd
         layer.path = path.cgPath
         self.view.layer.addSublayer(layer)
         

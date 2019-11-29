@@ -16,6 +16,7 @@ class CLImagePickerAnotherViewController: UIViewController {
     @IBOutlet weak var resetBtn: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
     
+    @IBOutlet weak var bottomHYS: NSLayoutConstraint!
     @objc let imageCellID = "imagecellID"
 
     // 是否隐藏视频文件，默认不隐藏
@@ -35,8 +36,35 @@ class CLImagePickerAnotherViewController: UIViewController {
         super.viewDidLoad()
 
         self.initView()
+        
+        self.bottomHYS.constant = UIDevice.current.isX() == true ? 50 + 34:50
+        
+        CLNotificationCenter.addObserver(self, selector: #selector(CLImagePickerAnotherViewController.PreviewForSelectOrNotSelectedNoticFunc), name: NSNotification.Name(rawValue:PreviewForSelectOrNotSelectedNotic), object: nil)
     }
-    
+    deinit {
+        CLNotificationCenter.removeObserver(self)
+    }
+    @objc func PreviewForSelectOrNotSelectedNoticFunc(notic:Notification) {
+        
+        let modelPreView = notic.object as! PreviewModel
+        for model in (self.photoArr ?? []) {
+            if model.phAsset == modelPreView.phAsset {
+                model.isSelect = modelPreView.isCheck
+            }
+        }
+        
+        if CLPickersTools.instence.getSavePictureCount() > 0 {
+            let title = "\(sureStr)(\(CLPickersTools.instence.getSavePictureCount()))"
+            self.sureBtn.setTitle(title, for: .normal)
+            self.sureBtn.isEnabled = true
+            self.resetBtn.isEnabled = true
+        } else {
+            self.sureBtn.isEnabled = false
+            self.resetBtn.isEnabled = false
+        }
+        
+        self.collectionView.reloadData()
+    }
     func initView() {
         // 存储用户设置的最多图片数量
         UserDefaults.standard.set(MaxImagesCount, forKey: CLImagePickerMaxImagesCount)
@@ -77,11 +105,12 @@ class CLImagePickerAnotherViewController: UIViewController {
     }
 
     @IBAction func clickSureBtn(_ sender: Any) {
-        if self.singleChooseImageCompleteClouse != nil {
-            self.singleChooseImageCompleteClouse!(CLPickersTools.instence.getChoosePictureArray(),nil)
-        }
         
-        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true) {
+            if self.singleChooseImageCompleteClouse != nil {
+                self.singleChooseImageCompleteClouse!(CLPickersTools.instence.getChoosePictureArray(),nil)
+            }
+        }
 
     }
     @IBAction func clickResetBtn(_ sender: Any) {

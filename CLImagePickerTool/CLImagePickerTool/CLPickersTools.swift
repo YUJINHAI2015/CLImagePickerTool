@@ -26,6 +26,12 @@ class CLPickersTools {
     // 配置状态栏的颜色
     public var statusBarType: CLImagePickerToolStatusBarType = .black
     
+    public var tineColor = UIColor.init(red: 85/255.0, green: 182/255.0, blue: 55/255.0, alpha: 1) {
+        didSet {
+            mainColor = tineColor
+        }
+    }
+
     fileprivate var dataArr = [[String:[CLImagePickerPhotoModel]]]()
     
     func loadData() -> Array<[String:[CLImagePickerPhotoModel]]>{
@@ -38,7 +44,7 @@ class CLPickersTools {
         var flagData: [String:[CLImagePickerPhotoModel]]?
         for i in 0..<self.dataArr.count {
             let dict = self.dataArr[i]
-            if dict.keys.first == allPhoto || dict.keys.first == allPhoto2 || dict.keys.first == allPhoto3 || dict.keys.first == allPhoto4 {
+            if dict.keys.first == allPhoto || dict.keys.first == allPhoto2 || dict.keys.first == allPhoto3 || dict.keys.first == allPhoto4 || dict.keys.first == allPhoto5 {
                 flagData = dict
                 self.dataArr.remove(at: i)
                 break
@@ -67,7 +73,7 @@ class CLPickersTools {
         var flagData: [String:[CLImagePickerPhotoModel]]?
         for i in 0..<self.dataArr.count {
             let dict = self.dataArr[i]
-            if dict.keys.first == allPhoto || dict.keys.first == allPhoto2 || dict.keys.first == allPhoto3 || dict.keys.first == allPhoto4 {
+            if dict.keys.first == allPhoto || dict.keys.first == allPhoto2 || dict.keys.first == allPhoto3 || dict.keys.first == allPhoto4 || dict.keys.first == allPhoto5 {
                 flagData = dict
                 break
             }
@@ -147,7 +153,7 @@ class CLPickersTools {
                         }
                     }
                     // 部分设备打印出来的是中文，所以直接添加就好了
-                    dataArr.append([self.setupTitleStr(assetCollection: assetCollection):array])
+                    dataArr.append([self.setupTitleStr(assetCollection: assetCollection): array])
                 }
             }
         }
@@ -160,7 +166,7 @@ class CLPickersTools {
             title = favStr
         } else if assetCollection.localizedTitle == "Videos" {
             title = videoStr
-        } else if assetCollection.localizedTitle == "All Photos" || assetCollection.localizedTitle == "Camera Roll" {
+        } else if assetCollection.localizedTitle == "All Photos" || assetCollection.localizedTitle == "Camera Roll" || assetCollection.localizedTitle == "最近项目" || assetCollection.localizedTitle == "Recents" {
             title = allPStr
         } else if assetCollection.localizedTitle == "Recently Added" {
             title = rencentStr
@@ -296,6 +302,7 @@ class CLPickersTools {
         //获取原图
         let manager = PHImageManager.default()
         let option = PHImageRequestOptions() //可以设置图像的质量、版本、也会有参数控制图像的裁剪
+        option.isSynchronous = true
         manager.requestImage(for: asset, targetSize:PHImageManagerMaximumSize, contentMode: .aspectFit, options: option) { (originImage, info) in
             dealImageSuccess(originImage,info)
         }
@@ -337,7 +344,10 @@ class CLPickersTools {
             // 取出之前的数据
             let dataArr = UserDefaults.standard.value(forKey: CLChooseImageAssetLocalIdentifierKey)
             var arr: Array<String> = dataArr as! Array<String>
-            arr.remove(at: arr.index(of: asset.localIdentifier)!)
+            let i = arr.firstIndex(of: asset.localIdentifier)
+            if i != nil {
+                arr.remove(at: i!)
+            }
             UserDefaults.standard.set(arr, forKey: CLChooseImageAssetLocalIdentifierKey)
             UserDefaults.standard.synchronize()
         }
@@ -420,10 +430,10 @@ class CLPickersTools {
             PopViewUtil.alert(title: photoLimitStr, message: clickSetStr, leftTitle: cancelStr, rightTitle: setStr, leftHandler: {
                 
             }, rightHandler: {
-                let url = URL(string: UIApplicationOpenSettingsURLString)
+                let url = URL(string: UIApplication.openSettingsURLString)
                 if let url = url, UIApplication.shared.canOpenURL(url) {
                     if #available(iOS 10, *) {
-                        UIApplication.shared.open(url, options: [:],
+                        UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]),
                                                   completionHandler: {
                                                     (success) in
                         })
@@ -453,10 +463,10 @@ class CLPickersTools {
             PopViewUtil.alert(title: cameraLimitStr, message: clickCameraStr, leftTitle: cancelStr, rightTitle: setStr, leftHandler: {
                 
             }, rightHandler: {
-                let url = URL(string: UIApplicationOpenSettingsURLString)
+                let url = URL(string: UIApplication.openSettingsURLString)
                 if let url = url, UIApplication.shared.canOpenURL(url) {
                     if #available(iOS 10, *) {
-                        UIApplication.shared.open(url, options: [:],
+                        UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]),
                                                   completionHandler: {
                                                     (success) in
                         })
@@ -484,4 +494,9 @@ class CLPickersTools {
     deinit {
         print("clpickertool释放")
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }
